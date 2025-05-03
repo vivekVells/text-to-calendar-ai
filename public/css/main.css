@@ -1,0 +1,18 @@
+/*
+ * Main Stylesheet - Text to Calendar AI
+ * 
+ * This file imports all component stylesheets in the correct order.
+ * Each component stylesheet corresponds to a specific part of the tutorial series.
+ */
+
+/* Base styles (common across all interfaces) */
+@import url('base.css');
+
+/* Part 1: Calendar API Foundation */
+@import url('components/part1-calendar-form.css');
+
+/* Part 2: Natural Language Processing */
+@import url('components/part2-nlp.css');
+
+/* Part 3: Voice Command Integration */
+@import url('components/part3-voice.css');

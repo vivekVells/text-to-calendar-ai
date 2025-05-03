@@ -4,63 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Google Calendar API</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      max-width: 800px;
-      margin: 0 auto;
-      padding: 20px;
-      line-height: 1.6;
-    }
-    .container {
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      padding: 20px;
-      margin-top: 20px;
-    }
-    h1 {
-      color: #333;
-    }
-    label {
-      display: block;
-      margin-top: 10px;
-      font-weight: bold;
-    }
-    input[type="text"], input[type="datetime-local"] {
-      width: 100%;
-      padding: 8px;
-      margin-bottom: 10px;
-    }
-    textarea {
-      width: 100%;
-      height: 80px;
-      padding: 8px;
-      margin-bottom: 10px;
-    }
-    button {
-      background-color: #4285f4;
-      color: white;
-      border: none;
-      padding: 10px 15px;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    .auth-btn {
-      background-color: #34a853;
-    }
-    #result {
-      margin-top: 20px;
-      background-color: #f8f9fa;
-      padding: 15px;
-      border-radius: 4px;
-      display: none;
-    }
-  </style>
+  <link rel="stylesheet" href="/css/main.css">
+  <!-- Part 1: Calendar API Foundation specific styles applied via the CSS architecture -->
 </head>
 <body>
-  <div style="display: flex; gap: 10px; margin-bottom: 20px;">
-    <a href="/" style="text-decoration: none; color: #4285f4; font-weight: bold;">Standard Event Form</a>
-    <a href="/text-to-event.html" style="text-decoration: none; color: #4285f4; font-weight: bold;">Natural Language Events</a>
+  <div class="nav">
+    <a href="/" class="active">Standard Event Form</a>
+    <a href="/text-to-event.html">Natural Language Events</a>
+    <a href="/voice-commands.html">Voice Commands</a>
   </div>
 
   <h1>Google Calendar API</h1>

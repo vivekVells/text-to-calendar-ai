@@ -1,5 +1,7 @@
 # [Part-1] Text to Action: API Foundation - Building a Smart Calendar AI Assistant
 
+Link to [Blog post](https://medium.com/@vivekvells/build-a-google-calendar-api-with-express-js-7f9955caeb88)
+
 The foundation of our "Text to Action" series starts with building a solid connection to Google Calendar's API. This module creates a simple but powerful REST API that can create events in your Google Calendar.
 
 **Flow:** Start the server (3000) → Authenticate to create tokens.json with valid auth to securely connect to GCal API (3000/auth/google) → Request create event API endpoint with appropriate details to create the event via GCal API (/api/create-event)

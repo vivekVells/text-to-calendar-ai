@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Voice Commands - Calendar Assistant</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <!-- Part 3: Voice Command Integration specific styles applied via the CSS architecture -->
+</head>
+<body>
+  <!-- 
+  Voice Command Integration - Part 3 of Text to Calendar AI series
+  
+  Key features implemented in this page:
+  1. Speech Recognition: Using Web Speech API to convert spoken words to text
+  2. Speech Synthesis: Using Web Speech API to provide spoken feedback
+  3. Press-and-hold interface: Inspired by Google Assistant for intuitive interaction
+  4. Real-time transcript display: Shows both final and interim recognition results
+  5. Integration with existing NLP pipeline: Uses the same backend as text input
+
+  Sharing the flow of action below. 
+
+  1. Simplified flow: Speech → Text → NLP Processing → Calendar Event Creation
+
+  2. High level flow overview:
+    Voice command (your natural voice)
+      → Text conversion using Web Speech API
+      → Text sent for NLP processing (existing backend /api/text-to-event) 
+      → Structured JSON Payload (Using LLM) 
+      → Google Calendar event (Using Google calendar API with JSON payload)
+
+  The voice feedback playing back is just a nice touch to complete the conversational experience.
+
+  -->
+
+  <div class="nav">
+    <a href="/">Standard Event Form</a>
+    <a href="/text-to-event.html">Natural Language Events</a>
+    <a href="/voice-commands.html" class="active">Voice Commands</a>
+  </div>
+
+  <h1>Voice Commands - Calendar Assistant</h1>
+  <p>Simply speak your commands to create calendar events — no typing required!</p>
+  
+  <div class="compatibility-notice" id="compatibility-notice">
+    <strong>Browser Compatibility Notice:</strong> Voice commands require a modern browser that supports the Web Speech API. 
+    For best results, please use Google Chrome.
+  </div>
+  
+  <div class="container">
+    <h2>Step 1: Authenticate with Google</h2>
+    <p>Before using the app, you need to authenticate with your Google account.</p>
+    <a href="/auth/google"><button class="auth-btn">Connect to Google Calendar</button></a>
+  </div>
+  
+  <div class="voice-container container">
+    <h2>Step 2: Speak Your Command</h2>
+    <p>Press and hold the microphone button while speaking. Release when you're done.</p>
+    
+    <button id="micButton" class="mic-button">
+      <i class="fa">🎤</i>
+    </button>
+    
+    <div class="status" id="status">Ready to listen</div>
+    
+    <div class="transcript" id="transcript">
+      <em>Your spoken text will appear here...</em>
+    </div>
+    
+    <div id="result"></div>
+    
+    <div class="commands-list">
+      <h3>Try these voice commands:</h3>
+      <div class="command-example">Schedule a team meeting tomorrow at 2pm for 45 minutes</div>
+      <div class="command-example">Create a dentist appointment on April 15 from 10am to 11:30am</div>
+      <div class="command-example">Set up a lunch with Sarah next Friday at noon</div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Check for Speech Recognition API support
+      const compatibilityNotice = document.getElementById('compatibility-notice');
+      
+      if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+        // Show compatibility notice if speech recognition is not supported
+        compatibilityNotice.classList.add('show');
+        
+        alert('Your browser does not support the Speech Recognition API. Please use Chrome, Edge, or Safari.');
+        document.getElementById('micButton').disabled = true;
+        document.getElementById('status').textContent = 'Speech recognition not available';
+        return;
+      } else {
+        // Hide compatibility notice if supported
+        compatibilityNotice.style.display = 'none';
+      }
+      
+      // Initialize speech recognition
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const recognition = new SpeechRecognition();
+      
+      // Initialize speech synthesis
+      const speechSynthesis = window.speechSynthesis;
+      
+      // Configure recognition
+      recognition.continuous = false;
+      recognition.interimResults = true;
+      recognition.lang = 'en-US';
+      
+      // DOM elements
+      const micButton = document.getElementById('micButton');
+      const statusEl = document.getElementById('status');
+      const transcriptEl = document.getElementById('transcript');
+      const resultEl = document.getElementById('result');
+      
+      // State variables
+      let isListening = false;
+      let finalTranscript = '';
+      let interimTranscript = '';
+      
+      // Press and hold to speak pattern
+      micButton.addEventListener('mousedown', startListening);
+      micButton.addEventListener('touchstart', startListening);
+      document.addEventListener('mouseup', stopListening);
+      document.addEventListener('touchend', stopListening);
+      
+      function startListening(e) {
+        // Prevent default behavior for touch events
+        if (e.type === 'touchstart') {
+          e.preventDefault();
+        }
+        
+        // Only start if we're not already listening
+        if (!isListening) {
+          // Reset transcripts
+          finalTranscript = '';
+          interimTranscript = '';
+          
+          // Start speech recognition
+          recognition.start();
+          isListening = true;
+          statusEl.textContent = 'Listening...';
+          micButton.classList.add('listening');
+          transcriptEl.innerHTML = '<em>Listening...</em>';
+        }
+      }
+      
+      function stopListening() {
+        // Only process if we were listening
+        if (isListening) {
+          recognition.stop();
+          isListening = false;
+          statusEl.textContent = 'Processing...';
+          micButton.classList.remove('listening');
+          
+          // Processing will happen in the onend handler
+        }
+      }
+      
+      // Speech recognition event handlers
+      recognition.onstart = () => {
+        isListening = true;
+        statusEl.textContent = 'Listening...';
+        micButton.classList.add('listening');
+      };
+      
+      recognition.onresult = (event) => {
+        interimTranscript = '';
+        
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const transcript = event.results[i][0].transcript;
+          
+          if (event.results[i].isFinal) {
+            finalTranscript += transcript;
+          } else {
+            interimTranscript += transcript;
+          }
+        }
+        
+        transcriptEl.innerHTML = `
+          <div class="final">${finalTranscript}</div>
+          <div class="interim"><em>${interimTranscript}</em></div>
+        `;
+      };
+      
+      recognition.onend = () => {
+        isListening = false;
+        
+        if (finalTranscript) {
+          statusEl.textContent = 'Processing...';
+          processVoiceCommand(finalTranscript);
+        } else if (interimTranscript) {
+          // If we only have interim results when recognition ends,
+          // use those as our final transcript
+          finalTranscript = interimTranscript;
+          statusEl.textContent = 'Processing...';
+          processVoiceCommand(finalTranscript);
+        } else {
+          statusEl.textContent = 'No speech detected. Try again.';
+          speak('I didn\'t hear anything. Please try again.');
+        }
+      };
+      
+      recognition.onerror = (event) => {
+        isListening = false;
+        micButton.classList.remove('listening');
+        statusEl.textContent = `Error: ${event.error}`;
+        console.error('Speech Recognition Error:', event.error);
+      };
+      
+      // Click example commands to hear them spoken
+      document.querySelectorAll('.command-example').forEach(example => {
+        example.addEventListener('click', () => {
+          speak(example.textContent);
+        });
+      });
+      
+      // Process the voice command
+      async function processVoiceCommand(text) {
+        statusEl.textContent = 'Creating event...';
+        resultEl.innerHTML = `<div class="loading">Processing your request <span></span></div>`;
+        resultEl.style.display = 'block';
+        
+        try {
+          // Get user timezone
+          const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+          
+          // Send the command to our API
+          const response = await fetch('/api/text-to-event', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Timezone': timezone
+            },
+            body: JSON.stringify({ text })
+          });
+          
+          const data = await response.json();
+          
+          if (data.success) {
+            // Format response for display
+            const eventData = data.eventData;
+            const startDate = new Date(eventData.startDateTime);
+            const endDate = new Date(eventData.endDateTime);
+            
+            const formattedStart = startDate.toLocaleString();
+            const formattedEnd = endDate.toLocaleString();
+            
+            resultEl.innerHTML = `
+              <div class="success-message">
+                <h3>Event Created Successfully!</h3>
+                <p><strong>Summary:</strong> ${eventData.summary}</p>
+                <p><strong>Start:</strong> ${formattedStart}</p>
+                <p><strong>End:</strong> ${formattedEnd}</p>
+                <p><a href="${data.eventLink}" target="_blank">View in Google Calendar</a></p>
+              </div>
+            `;
+            
+            statusEl.textContent = 'Event created!';
+            
+            // Provide voice feedback
+            speak(`Event created successfully: ${eventData.summary} on ${startDate.toLocaleDateString()} at ${startDate.toLocaleTimeString()}.`);
+          } else {
+            throw new Error(data.error || 'Failed to create event');
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          resultEl.innerHTML = `<div class="error-message">Error: ${error.message}</div>`;
+          statusEl.textContent = 'Error creating event';
+          speak('Sorry, I couldn\'t create that event. Please try again.');
+        }
+      }
+      
+      // Helper function for text-to-speech
+      function speak(text) {
+        // Cancel any ongoing speech
+        speechSynthesis.cancel();
+        
+        // Create a new utterance
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US';
+        utterance.rate = 1.0;
+        utterance.pitch = 1.0;
+        
+        // Speak the text
+        speechSynthesis.speak(utterance);
+      }
+    });
+  </script>
+</body>
+</html>

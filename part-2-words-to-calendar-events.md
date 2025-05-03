@@ -1,5 +1,7 @@
 # [Part-2] Text to Action: Words to Calendar Events - Building a Smart Calendar AI Assistant
 
+> Link to [Blog post](https://medium.com/@vivekvells/part-2-text-to-action-words-to-calendar-events-building-a-smart-calendar-ai-assistant-3ca928705442)
+
 Welcome back to the "Text to Action" series! In [Part 1](README.md), we built the foundation for our calendar integration - an Express.js backend that connects to Google Calendar's API to handle event creation.
 
 In this episode, we're taking a giant leap forward by enabling natural language understanding. You'll be able to type something like "Schedule a team meeting tomorrow at 3pm for one hour" and have it instantly transform into a properly structured calendar event.

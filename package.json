@@ -1,19 +1,34 @@
 {
   "name": "text-to-calendar",
   "version": "1.0.0",
-  "description": "Convert natural language to Google Calendar events by using simple Express.js API endpoint + Ollama LLM",
+  "description": "A smart calendar assistant that turns text and voice into calendar events",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
-    "dev": "nodemon app.js"
+    "dev": "nodemon app.js",
+    "test-browser": "bash test-browser-support.sh"
   },
+  "keywords": [
+    "calendar",
+    "google-calendar",
+    "express",
+    "natural-language",
+    "oauth2",
+    "voice-commands",
+    "speech-recognition"
+  ],
+  "author": "Vivek Vells",
+  "license": "MIT",
   "dependencies": {
-    "axios": "^1.6.7",
-    "dotenv": "^16.4.1",
+    "axios": "^1.6.0",
+    "dotenv": "^16.3.1",
     "express": "^4.18.2",
-    "googleapis": "^130.0.0"
+    "googleapis": "^128.0.0"
   },
   "devDependencies": {
-    "nodemon": "^3.0.3"
+    "nodemon": "^3.0.1"
+  },
+  "engines": {
+    "node": ">=14.0.0"
   }
 }

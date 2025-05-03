@@ -1,0 +1,151 @@
+/*
+ * Part 3: Voice Command Interface Styles
+ * Styles specific to the voice recognition and speech synthesis features
+ */
+
+/* Voice container styling */
+.voice-container {
+  text-align: center;
+  padding: 1rem;
+}
+
+/* Microphone button styling */
+.mic-button {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: #f44336;
+  border: none;
+  color: white;
+  font-size: 24px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 2rem auto;
+  transition: all 0.3s ease;
+  box-shadow: 0px 3px 5px rgba(0,0,0,0.2);
+}
+
+.mic-button:hover {
+  background-color: #d32f2f;
+  transform: scale(1.05);
+}
+
+.mic-button.listening {
+  animation: pulse 1.5s infinite;
+  background-color: #4CAF50;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7);
+  }
+  70% {
+    transform: scale(1.1);
+    box-shadow: 0 0 0 10px rgba(76, 175, 80, 0);
+  }
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(76, 175, 80, 0);
+  }
+}
+
+/* Speech transcript area */
+.transcript {
+  margin: 2rem 0;
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  min-height: 100px;
+  text-align: left;
+  background-color: white;
+}
+
+/* Status indicator */
+.status {
+  font-style: italic;
+  color: #666;
+  margin: 1rem 0;
+}
+
+/* Voice command examples */
+.commands-list {
+  margin-top: 2rem;
+  text-align: left;
+  border: 1px solid #eee;
+  padding: 1rem;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+}
+
+.command-example {
+  margin: 0.5rem 0;
+  color: #2196F3;
+  cursor: pointer;
+  padding: 5px;
+  transition: background-color 0.2s ease;
+}
+
+.command-example:hover {
+  text-decoration: underline;
+  background-color: #e1f5fe;
+  border-radius: 4px;
+}
+
+/* Transcript styles */
+.final {
+  color: #333;
+  font-weight: 500;
+}
+
+.interim {
+  color: #999;
+  font-style: italic;
+}
+
+/* Voice feedback indicator */
+.voice-feedback {
+  display: inline-block;
+  width: 24px;
+  height: 24px;
+  background-color: #4285f4;
+  border-radius: 50%;
+  margin-right: 10px;
+  position: relative;
+  vertical-align: middle;
+}
+
+.voice-feedback::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px;
+  height: 10px;
+  background-color: white;
+  border-radius: 50%;
+  animation: pulse-feedback 1s infinite;
+}
+
+@keyframes pulse-feedback {
+  0% { transform: translate(-50%, -50%) scale(0.5); opacity: 0.2; }
+  50% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(0.5); opacity: 0.2; }
+}
+
+/* Browser compatibility notice */
+.compatibility-notice {
+  background-color: #fff9c4;
+  border: 1px solid #ffd54f;
+  padding: 10px;
+  margin: 10px 0;
+  border-radius: 4px;
+  display: none; /* Hidden by default, shown when needed */
+}
+
+.compatibility-notice.show {
+  display: block;
+}

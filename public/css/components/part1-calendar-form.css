@@ -1,0 +1,48 @@
+/*
+ * Part 1: Calendar Form Styles
+ * Styles specific to the standard calendar form interface
+ */
+
+/* Calendar form specific styles */
+.form-container {
+  background-color: #f9f9fa;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.date-time-fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 15px;
+}
+
+.date-time-fields label {
+  flex-basis: 100%;
+}
+
+.date-time-fields input {
+  flex: 1;
+  min-width: 200px;
+}
+
+/* Event creation success feedback */
+.event-preview {
+  background-color: #e3f2fd;
+  padding: 15px;
+  border-radius: 4px;
+  margin-top: 20px;
+  border-left: 4px solid #2196F3;
+}
+
+.event-link {
+  display: inline-block;
+  margin-top: 10px;
+  color: #2196F3;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.event-link:hover {
+  text-decoration: underline;
+}
