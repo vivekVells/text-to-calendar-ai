@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Voice Commands with Wake Word - Calendar Assistant</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/components/part-4-wake-word.css">
+</head>
+<body>
+  <!-- 
+  Voice Commands with Wake Word - Part 4 of Text to Calendar AI series
+  
+  This demonstrates highly accurate wake word detection using continuous listening
+  with smart command parsing for maximum reliability.
+  -->
+
+  <div class="nav">
+    <a href="/">Standard Event Form</a>
+    <a href="/text-to-event.html">Natural Language Events</a>
+    <a href="/voice-commands.html">Voice Commands</a>
+    <a href="/part-4-wake-word-detection-using-web-speech-api.html" class="active">Wake Word Demo</a>
+  </div>
+
+  <h1>Voice Commands with Wake Word</h1>
+  <p>Experience hands-free calendar management with "Hey Calendar" wake word detection!</p>
+  
+  <div class="compatibility-notice" id="compatibility-notice">
+    <strong>Browser Compatibility Notice:</strong> Wake word detection requires a modern browser with Web Speech API support. 
+    For best results, please use Google Chrome.
+  </div>
+  
+  <div class="container">
+    <h2>Step 1: Authenticate with Google</h2>
+    <p>Connect your Google account to enable calendar event creation.</p>
+    <a href="/auth/google"><button class="auth-btn">Connect to Google Calendar</button></a>
+  </div>
+  
+  <div class="wake-word-container container">
+    <h2>Step 2: Enable Wake Word Detection</h2>
+    <p>Toggle always-on listening mode. Say "Hey Calendar" followed by your command.</p>
+    
+    <div class="wake-word-controls">
+      <button id="wakeWordToggle" class="wake-word-btn">
+        <span class="wake-word-icon">🎤</span>
+        <span class="wake-word-text">Enable "Hey Calendar"</span>
+      </button>
+    </div>
+    
+    <div class="status-container">
+      <div class="status" id="status">Ready to enable wake word detection</div>
+      <div class="wake-word-indicator" id="wakeWordIndicator">
+        <span class="indicator-dot"></span>
+        <span class="indicator-text">Wake Word: OFF</span>
+      </div>
+    </div>
+    
+    <div class="transcript-container">
+      <div class="transcript-label">Voice Recognition:</div>
+      <div class="transcript" id="transcript">
+        <em>Voice commands will appear here...</em>
+      </div>
+    </div>
+    
+    <div id="result"></div>
+    
+    <div class="demo-commands">
+      <h3>Try These Commands:</h3>
+      <div class="command-list">
+        <div class="command-example">
+          "Hey Calendar, schedule a team meeting tomorrow at 2pm"
+        </div>
+        <div class="command-example">
+          "Hey Calendar, create a dentist appointment on Friday at 10am"
+        </div>
+        <div class="command-example">
+          "Hey Calendar, set up lunch with Sarah next Tuesday at noon"
+        </div>
+      </div>
+      <p class="demo-tip">
+        <strong>💡 Pro Tip:</strong> Speak the entire command in one go: "Hey Calendar, [your command]". Works much better than pausing!
+      </p>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // Check for Speech Recognition API support
+      const compatibilityNotice = document.getElementById('compatibility-notice');
+      
+      if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+        compatibilityNotice.classList.add('show');
+        alert('Your browser does not support the Speech Recognition API. Please use Chrome, Edge, or Safari.');
+        document.getElementById('wakeWordToggle').disabled = true;
+        document.getElementById('status').textContent = 'Speech recognition not available';
+        return;
+      } else {
+        compatibilityNotice.style.display = 'none';
+      }
+      
+      // Initialize speech recognition and synthesis
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const recognition = new SpeechRecognition();
+      const speechSynthesis = window.speechSynthesis;
+      
+      // Configure recognition for maximum accuracy
+      recognition.continuous = true;
+      recognition.interimResults = true;
+      recognition.lang = 'en-US';
+      
+      // DOM elements
+      const wakeWordToggle = document.getElementById('wakeWordToggle');
+      const statusEl = document.getElementById('status');
+      const transcriptEl = document.getElementById('transcript');
+      const resultEl = document.getElementById('result');
+      const wakeWordIndicator = document.getElementById('wakeWordIndicator');
+      
+      // Simple state management
+      let isWakeWordEnabled = false;
+      let isProcessingCommand = false;
+      let lastProcessedCommand = '';
+      
+      // Wake word toggle
+      wakeWordToggle.addEventListener('click', toggleWakeWord);
+      
+      function toggleWakeWord() {
+        isWakeWordEnabled = !isWakeWordEnabled;
+        
+        if (isWakeWordEnabled) {
+          startWakeWordListening();
+        } else {
+          stopWakeWordListening();
+        }
+      }
+      
+      function startWakeWordListening() {
+        try {
+          recognition.start();
+          
+          wakeWordToggle.innerHTML = `
+            <span class="wake-word-icon">🔴</span>
+            <span class="wake-word-text">Disable "Hey Calendar"</span>
+          `;
+          wakeWordToggle.classList.add('listening');
+          
+          statusEl.textContent = 'Listening for "Hey Calendar"...';
+          wakeWordIndicator.innerHTML = `
+            <span class="indicator-dot active"></span>
+            <span class="indicator-text">Wake Word: ON</span>
+          `;
+          
+          speak('Wake word detection enabled.');
+          
+        } catch (error) {
+          console.error('Failed to start recognition:', error);
+          statusEl.textContent = 'Failed to start wake word detection';
+        }
+      }
+      
+      function stopWakeWordListening() {
+        isWakeWordEnabled = false;
+        isProcessingCommand = false;
+        
+        recognition.stop();
+        
+        wakeWordToggle.innerHTML = `
+          <span class="wake-word-icon">🎤</span>
+          <span class="wake-word-text">Enable "Hey Calendar"</span>
+        `;
+        wakeWordToggle.classList.remove('listening');
+        
+        statusEl.textContent = 'Wake word detection disabled';
+        wakeWordIndicator.innerHTML = `
+          <span class="indicator-dot"></span>
+          <span class="indicator-text">Wake Word: OFF</span>
+        `;
+        
+        speak('Wake word detection disabled.');
+      }
+      
+      // Simple, reliable recognition handling
+      recognition.onstart = () => {
+        console.log('Recognition started');
+      };
+      
+      recognition.onresult = (event) => {
+        if (isProcessingCommand) return; // Ignore while processing
+        
+        let finalTranscript = '';
+        let interimTranscript = '';
+        
+        // Get the latest results
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const transcript = event.results[i][0].transcript;
+          
+          if (event.results[i].isFinal) {
+            finalTranscript += transcript;
+          } else {
+            interimTranscript += transcript;
+          }
+        }
+        
+        // Show what we're hearing
+        const currentTranscript = finalTranscript || interimTranscript;
+        transcriptEl.innerHTML = `<span class="heard-text">Hearing: "${currentTranscript}"</span>`;
+        
+        // Process final results only
+        if (finalTranscript) {
+          processTranscript(finalTranscript.toLowerCase().trim());
+        }
+      };
+      
+      recognition.onend = () => {
+        console.log('Recognition ended');
+        
+        // Auto-restart if still enabled and not processing
+        if (isWakeWordEnabled && !isProcessingCommand) {
+          setTimeout(() => {
+            if (isWakeWordEnabled && !isProcessingCommand) {
+              try {
+                recognition.start();
+                console.log('Recognition restarted');
+              } catch (error) {
+                console.error('Failed to restart:', error);
+                // Try again after delay
+                setTimeout(() => {
+                  if (isWakeWordEnabled) {
+                    try {
+                      recognition.start();
+                    } catch (retryError) {
+                      statusEl.textContent = 'Recognition failed - please toggle off and on';
+                    }
+                  }
+                }, 1000);
+              }
+            }
+          }, 100);
+        }
+      };
+      
+      recognition.onerror = (event) => {
+        console.error('Recognition error:', event.error);
+        if (event.error === 'not-allowed') {
+          statusEl.textContent = 'Microphone access denied';
+          stopWakeWordListening();
+        }
+      };
+      
+      function processTranscript(transcript) {
+        // Avoid processing the same command twice
+        if (transcript === lastProcessedCommand) {
+          return;
+        }
+        
+        // Look for wake word + command pattern
+        if (transcript.includes('hey calendar')) {
+          lastProcessedCommand = transcript;
+          handleWakeWordCommand(transcript);
+        }
+      }
+      
+      function handleWakeWordCommand(transcript) {
+        console.log('Wake word command detected:', transcript);
+        isProcessingCommand = true;
+        
+        // Visual feedback
+        statusEl.textContent = 'Wake word detected! Processing command...';
+        wakeWordIndicator.innerHTML = `
+          <span class="indicator-dot processing"></span>
+          <span class="indicator-text">Processing...</span>
+        `;
+        
+        transcriptEl.innerHTML = `
+          <span class="wake-word-detected">Wake word detected!</span><br>
+          <span class="command-text">Full command: "${transcript}"</span>
+        `;
+        
+        // Extract command after wake word
+        const command = transcript.replace(/hey calendar,?/gi, '').trim();
+        
+        if (command) {
+          speak('Yes, processing your command.');
+          processVoiceCommand(command);
+        } else {
+          speak('I heard Hey Calendar, but no command. Please try again.');
+          resetToListening();
+        }
+      }
+      
+      async function processVoiceCommand(text) {
+        statusEl.textContent = 'Creating calendar event...';
+        resultEl.innerHTML = `<div class="loading">Processing your request <span></span></div>`;
+        resultEl.style.display = 'block';
+        
+        try {
+          const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+          
+          const response = await fetch('/api/text-to-event', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-Timezone': timezone
+            },
+            body: JSON.stringify({ text })
+          });
+          
+          const data = await response.json();
+          
+          if (data.success) {
+            const eventData = data.eventData;
+            const startDate = new Date(eventData.startDateTime);
+            const endDate = new Date(eventData.endDateTime);
+            
+            resultEl.innerHTML = `
+              <div class="success-message">
+                <h3>✅ Event Created Successfully!</h3>
+                <div class="event-details">
+                  <p><strong>Event:</strong> ${eventData.summary}</p>
+                  <p><strong>Start:</strong> ${startDate.toLocaleString()}</p>
+                  <p><strong>End:</strong> ${endDate.toLocaleString()}</p>
+                  <p><a href="${data.eventLink}" target="_blank">📅 View in Google Calendar</a></p>
+                </div>
+              </div>
+            `;
+            
+            speak(`Event created: ${eventData.summary}.`);
+            
+          } else {
+            throw new Error(data.error || 'Failed to create event');
+          }
+          
+        } catch (error) {
+          console.error('Error:', error);
+          resultEl.innerHTML = `<div class="error-message">❌ Error: ${error.message}</div>`;
+          speak('Sorry, I couldn\'t create that event.');
+        }
+        
+        // Reset after processing
+        setTimeout(resetToListening, 2000);
+      }
+      
+      function resetToListening() {
+        isProcessingCommand = false;
+        lastProcessedCommand = '';
+        
+        if (isWakeWordEnabled) {
+          statusEl.textContent = 'Listening for "Hey Calendar"...';
+          wakeWordIndicator.innerHTML = `
+            <span class="indicator-dot active"></span>
+            <span class="indicator-text">Wake Word: ON</span>
+          `;
+        }
+      }
+      
+      function speak(text) {
+        speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US';
+        utterance.rate = 1.0;
+        utterance.pitch = 1.0;
+        speechSynthesis.speak(utterance);
+      }
+      
+      // Click example commands to hear them spoken
+      document.querySelectorAll('.command-example').forEach(example => {
+        example.addEventListener('click', () => {
+          speak(example.textContent);
+        });
+      });
+    });
+  </script>
+</body>
+</html>

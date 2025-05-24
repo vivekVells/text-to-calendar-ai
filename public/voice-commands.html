@@ -37,6 +37,7 @@
     <a href="/">Standard Event Form</a>
     <a href="/text-to-event.html">Natural Language Events</a>
     <a href="/voice-commands.html" class="active">Voice Commands</a>
+    <a href="/part-4-wake-word-detection-using-web-speech-api.html">Wake Word Demo</a>
   </div>
 
   <h1>Voice Commands - Calendar Assistant</h1>
@@ -119,10 +120,10 @@
       let interimTranscript = '';
       
       // Press and hold to speak pattern
-      micButton.addEventListener('mousedown', startListening);
-      micButton.addEventListener('touchstart', startListening);
-      document.addEventListener('mouseup', stopListening);
-      document.addEventListener('touchend', stopListening);
+      micButton.addEventListener('mousedown', startListening); // Desktop
+      micButton.addEventListener('touchstart', startListening); // Mobile
+      document.addEventListener('mouseup', stopListening); // Desktop
+      document.addEventListener('touchend', stopListening); // Mobile
       
       function startListening(e) {
         // Prevent default behavior for touch events

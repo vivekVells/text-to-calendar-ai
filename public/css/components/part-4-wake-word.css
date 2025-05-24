@@ -1,0 +1,327 @@
+/* Wake Word Detection Component Styles */
+
+.wake-word-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.wake-word-controls {
+  text-align: center;
+  margin: 30px 0;
+}
+
+.wake-word-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 32px;
+  font-size: 18px;
+  font-weight: 600;
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+  min-width: 280px;
+}
+
+.wake-word-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+}
+
+.wake-word-btn.listening {
+  background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+  box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+  animation: pulse 2s infinite;
+}
+
+.wake-word-btn.listening:hover {
+  box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.wake-word-icon {
+  font-size: 24px;
+}
+
+.wake-word-text {
+  font-size: 16px;
+}
+
+.status-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  margin: 30px 0;
+}
+
+.status {
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 500;
+  text-align: center;
+  min-height: 20px;
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  color: #495057;
+}
+
+.wake-word-indicator {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  border-radius: 20px;
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.indicator-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #6c757d;
+  transition: all 0.3s ease;
+}
+
+.indicator-dot.active {
+  background: #28a745;
+  box-shadow: 0 0 10px rgba(40, 167, 69, 0.5);
+  animation: breathe 2s infinite;
+}
+
+.indicator-dot.processing {
+  background: #ffc107;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes breathe {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.transcript-container {
+  margin: 30px 0;
+  padding: 20px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #667eea;
+}
+
+.transcript-label {
+  font-size: 14px;
+  font-weight: 600;
+  color: #495057;
+  margin-bottom: 8px;
+}
+
+.transcript {
+  font-size: 16px;
+  line-height: 1.5;
+  color: #212529;
+  min-height: 24px;
+}
+
+.heard-text {
+  color: #6c757d;
+  font-style: italic;
+}
+
+.wake-word-detected {
+  color: #28a745;
+  font-weight: 600;
+}
+
+.command-text {
+  color: #667eea;
+  font-weight: 500;
+}
+
+.command-prompt {
+  color: #667eea;
+  font-weight: 500;
+  font-style: italic;
+}
+
+.timeout-text {
+  color: #6c757d;
+  font-style: italic;
+}
+
+.demo-commands {
+  margin: 40px 0;
+  padding: 25px;
+  background: #fff;
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.demo-commands h3 {
+  margin-top: 0;
+  color: #343a40;
+  text-align: center;
+}
+
+.demo-step {
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  margin: 10px 0;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #28a745;
+}
+
+.step-number {
+  background: #28a745;
+  color: white;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 12px;
+  margin-right: 12px;
+  flex-shrink: 0;
+}
+
+.command-examples {
+  margin: 15px 0;
+}
+
+.command-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin: 20px 0;
+}
+
+.command-example {
+  padding: 15px;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #667eea;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 16px;
+  line-height: 1.4;
+}
+
+.command-example:hover {
+  background: #e9ecef;
+  transform: translateX(5px);
+}
+
+.wake-word {
+  color: #dc3545;
+  font-weight: 600;
+}
+
+.demo-tip {
+  text-align: center;
+  padding: 15px;
+  background: #d1ecf1;
+  border: 1px solid #bee5eb;
+  border-radius: 8px;
+  color: #0c5460;
+  margin-top: 20px;
+}
+
+.loading {
+  text-align: center;
+  padding: 20px;
+  color: #6c757d;
+}
+
+.loading span:after {
+  content: '';
+  animation: dots 2s infinite;
+}
+
+@keyframes dots {
+  0%, 20% { content: ''; }
+  25% { content: '.'; }
+  50% { content: '..'; }
+  75%, 100% { content: '...'; }
+}
+
+.success-message {
+  background: #d4edda;
+  border: 1px solid #c3e6cb;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 20px 0;
+}
+
+.success-message h3 {
+  color: #155724;
+  margin-top: 0;
+}
+
+.event-details {
+  margin-top: 15px;
+}
+
+.event-details p {
+  margin: 8px 0;
+  color: #155724;
+}
+
+.event-details a {
+  color: #0056b3;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.event-details a:hover {
+  text-decoration: underline;
+}
+
+.error-message {
+  background: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: 8px;
+  padding: 20px;
+  margin: 20px 0;
+  color: #721c24;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .wake-word-btn {
+    min-width: 240px;
+    font-size: 16px;
+    padding: 14px 24px;
+  }
+  
+  .status-container {
+    margin: 20px 0;
+  }
+  
+  .demo-commands {
+    padding: 20px;
+  }
+  
+  .command-example {
+    font-size: 15px;
+  }
+}

@@ -1,7 +1,7 @@
 {
   "name": "text-to-calendar",
-  "version": "1.0.0",
-  "description": "A smart calendar assistant that turns text and voice into calendar events",
+  "version": "1.4.0",
+  "description": "A smart calendar assistant that turns text, voice, and wake words into calendar events",
   "main": "app.js",
   "scripts": {
     "start": "node app.js",
@@ -15,7 +15,9 @@
     "natural-language",
     "oauth2",
     "voice-commands",
-    "speech-recognition"
+    "speech-recognition",
+    "wake-word-detection-using-web-speech-api",
+    "hands-free"
   ],
   "author": "Vivek Vells",
   "license": "MIT",
